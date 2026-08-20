@@ -38,12 +38,21 @@ class ShevLoggerApi:
         self._token = token.strip()
         self._base_url = f"http://{self.host}/api/ha/v1"
 
-    async def _json(self, path: str) -> dict[str, Any]:
+    async def _json(
+        self,
+        path: str,
+        *,
+        method: str = "GET",
+        json: dict[str, Any] | None = None,
+        require_api_version: bool = True,
+    ) -> dict[str, Any]:
         try:
-            async with self._session.get(
+            async with self._session.request(
+                method,
                 f"{self._base_url}/{path}",
                 headers={"Authorization": f"Bearer {self._token}"},
                 timeout=ClientTimeout(total=5),
+                json=json,
             ) as response:
                 await self._raise_for_status(response)
                 payload = await response.json(content_type=None)
@@ -52,7 +61,9 @@ class ShevLoggerApi:
         except (ClientError, TimeoutError, ValueError, TypeError) as error:
             raise ShevLoggerConnectionError(str(error)) from error
 
-        if not isinstance(payload, dict) or payload.get("apiVersion") != 1:
+        if not isinstance(payload, dict) or (
+            require_api_version and payload.get("apiVersion") != 1
+        ):
             raise ShevLoggerConnectionError("Unsupported ShevLogger API response")
         return payload
 
@@ -99,3 +110,17 @@ class ShevLoggerApi:
 
     async def async_get_states(self) -> dict[str, Any]:
         return await self._json("states")
+
+    async def async_write(self, key: str, value: int | float) -> dict[str, Any]:
+        """Write one profile parameter directly to the inverter."""
+        payload = await self._json(
+            "write",
+            method="POST",
+            json={"key": key, "value": value},
+            require_api_version=False,
+        )
+        if payload.get("ok") is not True:
+            raise ShevLoggerConnectionError(
+                str(payload.get("error") or "The inverter rejected the value")
+            )
+        return payload

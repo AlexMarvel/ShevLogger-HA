@@ -9,4 +9,4 @@ DOMAIN = "shevlogger"
 CONF_TOKEN = "token"
 DEFAULT_SCAN_INTERVAL_SECONDS = 5
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.NUMBER, Platform.SELECT, Platform.SENSOR, Platform.SWITCH]

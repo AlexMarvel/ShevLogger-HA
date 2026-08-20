@@ -4,8 +4,9 @@
 [![GitHub release](https://img.shields.io/github/v/release/AlexMarvel/ShevLogger-HA)](https://github.com/AlexMarvel/ShevLogger-HA/releases)
 
 Local Home Assistant integration for the **SmartShev ShevLogger** inverter
-gateway. It discovers loggers automatically through mDNS and exposes all
-values declared by the active inverter profile as Home Assistant sensors.
+gateway. It discovers loggers automatically through mDNS, exposes all values
+declared by the active inverter profile, and lets Home Assistant edit the
+parameters that the profile marks as writable.
 
 The integration talks directly to the logger over the local network. It does
 not require the SmartShev cloud, MQTT or a fixed IP address.
@@ -16,6 +17,8 @@ not require the SmartShev cloud, MQTT or a fixed IP address.
 - manual setup by local IP address or hostname;
 - activation-key authentication;
 - all inverter profile values fetched in one request every 5 seconds;
+- editable number, list and switch parameters with profile-defined limits;
+- electrical units such as W, V, A and Hz for older profiles that omit them;
 - stable entity IDs based on the logger device ID;
 - automatic entity catalogue reload when the inverter profile changes;
 - Ukrainian and English setup screens.
@@ -59,7 +62,8 @@ Project website: [logger.smartshev.pp.ua](https://logger.smartshev.pp.ua)
 
 ## Українською
 
-Інтеграція автоматично знаходить ShevLogger у локальній мережі та додає всі
-сенсори активного профілю інвертора. Якщо mDNS між мережами недоступний,
+Інтеграція автоматично знаходить ShevLogger у локальній мережі, додає всі
+сенсори та дозволяє змінювати доступні параметри інвертора прямо з Home
+Assistant. Якщо mDNS між мережами недоступний,
 ShevLogger можна додати вручну за IP-адресою. Для входу використовується ключ
 активації логера.

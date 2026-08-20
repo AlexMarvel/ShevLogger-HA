@@ -7,13 +7,12 @@ from typing import Any
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import ShevLoggerRuntimeData
 from .const import DOMAIN
 from .coordinator import ShevLoggerCoordinator
+from .entity import ShevLoggerEntity, inferred_device_class, inferred_unit
 
 
 async def async_setup_entry(
@@ -26,10 +25,15 @@ async def async_setup_entry(
         ShevLoggerSensor(runtime.coordinator, runtime.info, description)
         for description in runtime.entities
         if description.get("key")
+        and (
+            not description.get("writable")
+            or description.get("platform", "sensor")
+            not in {"number", "select", "switch"}
+        )
     )
 
 
-class ShevLoggerSensor(CoordinatorEntity[ShevLoggerCoordinator], SensorEntity):
+class ShevLoggerSensor(ShevLoggerEntity, SensorEntity):
     """One value from the profile; all instances share the same poll."""
 
     _attr_has_entity_name = True
@@ -40,39 +44,28 @@ class ShevLoggerSensor(CoordinatorEntity[ShevLoggerCoordinator], SensorEntity):
         info: dict[str, Any],
         description: dict[str, Any],
     ) -> None:
-        super().__init__(coordinator)
-        device = info["device"]
-        self._key = str(description["key"])
-        self._description = description
-        self._attr_unique_id = f"{device['id']}_{self._key}"
-        self._attr_name = str(description.get("name") or self._key)
-        self._attr_native_unit_of_measurement = description.get("unit") or None
-        self._attr_device_class = description.get("deviceClass") or None
-        self._attr_state_class = description.get("stateClass") or None
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, str(device["id"]))},
-            name=str(device.get("name") or "ShevLogger"),
-            manufacturer=str(device.get("manufacturer") or "SmartShev"),
-            model=str(device.get("model") or "ShevLogger"),
-            sw_version=str(device.get("firmware") or ""),
-            configuration_url=f"http://{coordinator.api.host}/",
-        )
+        super().__init__(coordinator, info, description)
+        unit = inferred_unit(description)
+        self._attr_native_unit_of_measurement = unit
+        self._attr_device_class = inferred_device_class(description, unit)
+        state_class = description.get("stateClass")
+        if not state_class and self._attr_device_class in {
+            "power",
+            "frequency",
+            "voltage",
+            "current",
+            "temperature",
+        }:
+            state_class = "measurement"
+        self._attr_state_class = state_class or None
 
     @property
     def native_value(self) -> Any:
-        value = (self.coordinator.data.get("states") or {}).get(self._key)
+        value = self.raw_state
         modifier = self._description.get("modifier", 1)
         if isinstance(value, (int, float)) and isinstance(modifier, (int, float)):
             return value * modifier
         return value
-
-    @property
-    def available(self) -> bool:
-        return (
-            self.coordinator.last_update_success
-            and bool(self.coordinator.data.get("available"))
-            and self.native_value is not None
-        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
