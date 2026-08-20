@@ -98,7 +98,7 @@ class ShevLoggerEntity(CoordinatorEntity[ShevLoggerCoordinator]):
     @property
     def raw_state(self) -> Any:
         """Return the value already held in coordinator memory."""
-        return (self.coordinator.data.get("states") or {}).get(self._key)
+        return (self.coordinator.data.get("data") or {}).get(self._key)
 
     @property
     def available(self) -> bool:

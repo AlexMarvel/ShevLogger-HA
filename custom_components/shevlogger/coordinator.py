@@ -38,7 +38,7 @@ class ShevLoggerCoordinator(DataUpdateCoordinator[dict]):
 
     async def _async_update_data(self) -> dict:
         try:
-            data = await self.api.async_get_states()
+            data = await self.api.async_get_state()
         except ShevLoggerAuthError as error:
             raise ConfigEntryAuthFailed from error
         except ShevLoggerError as error:

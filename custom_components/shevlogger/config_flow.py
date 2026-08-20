@@ -93,7 +93,7 @@ class ShevLoggerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             normalized_host = normalize_host(host)
             info = await ShevLoggerApi(
                 async_get_clientsession(self.hass), normalized_host, token
-            ).async_get_info()
+            ).async_get_state()
             device = info["device"]
             device_id = str(device["id"])
         except ShevLoggerAuthError:

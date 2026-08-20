@@ -36,7 +36,7 @@ class ShevLoggerApi:
         self._session = session
         self.host = normalize_host(host)
         self._token = token.strip()
-        self._base_url = f"http://{self.host}/api/ha/v1"
+        self._base_url = f"http://{self.host}/api/v1"
 
     async def _json(
         self,
@@ -76,17 +76,14 @@ class ShevLoggerApi:
             await response.read()
             raise ShevLoggerConnectionError(f"HTTP {response.status}")
 
-    async def async_get_info(self) -> dict[str, Any]:
-        return await self._json("info")
-
-    async def async_get_entities(self) -> dict[str, Any]:
+    async def async_get_schema(self) -> dict[str, Any]:
         entities: list[dict[str, Any]] = []
         cursor = 0
         first_page: dict[str, Any] | None = None
         # Firmware pages keep the ESP32 JSON document bounded. The hard limit
         # also prevents a broken device from creating an infinite setup loop.
         for _ in range(16):
-            page = await self._json(f"entities?cursor={cursor}")
+            page = await self._json(f"schema?cursor={cursor}")
             if first_page is None:
                 first_page = page
             elif page.get("metaRevision") != first_page.get("metaRevision"):
@@ -108,8 +105,9 @@ class ShevLoggerApi:
 
         raise ShevLoggerConnectionError("Entity catalogue is too large")
 
-    async def async_get_states(self) -> dict[str, Any]:
-        return await self._json("states")
+    async def async_get_state(self) -> dict[str, Any]:
+        """Return the same canonical state document used by the mobile app."""
+        return await self._json("state")
 
     async def async_write(self, key: str, value: int | float) -> dict[str, Any]:
         """Write one profile parameter directly to the inverter."""

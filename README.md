@@ -16,6 +16,7 @@ not require the SmartShev cloud, MQTT or a fixed IP address.
 - automatic `_shevlogger._tcp.local.` discovery;
 - manual setup by local IP address or hostname;
 - activation-key authentication;
+- the same canonical `/api/v1/state` document as the SmartShev app;
 - all inverter profile values fetched in one request every 5 seconds;
 - editable number, list and switch parameters with profile-defined limits;
 - electrical units such as W, V, A and Hz for older profiles that omit them;
@@ -47,9 +48,10 @@ Copy `custom_components/shevlogger` to
 ## How polling works
 
 Entity metadata is downloaded only during setup or after changing the inverter
-profile. Current values are then fetched with a single local HTTP request every
-5 seconds, regardless of the number of sensors. The logger does not run an MQTT
-client or a separate Home Assistant background task.
+profile. Current values are then fetched from `/api/v1/state`, the same state
+document used by the SmartShev app and local WebSocket. This remains one local
+HTTP request every 5 seconds regardless of the number of sensors. The logger
+does not run an MQTT client or a separate Home Assistant background task.
 
 ## Requirements
 

@@ -30,8 +30,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async_get_clientsession(hass), entry.data["host"], entry.data[CONF_TOKEN]
     )
     try:
-        info = await api.async_get_info()
-        entity_payload = await api.async_get_entities()
+        info = await api.async_get_state()
+        entity_payload = await api.async_get_schema()
     except ShevLoggerAuthError as error:
         raise ConfigEntryAuthFailed from error
     except ShevLoggerError as error:
