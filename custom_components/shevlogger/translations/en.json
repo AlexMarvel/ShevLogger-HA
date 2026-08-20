@@ -1,0 +1,29 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This ShevLogger is already configured.",
+      "invalid_discovery": "The discovered device did not provide a valid identifier."
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to ShevLogger.",
+      "invalid_auth": "The activation key is incorrect."
+    },
+    "step": {
+      "confirm": {
+        "data": {
+          "token": "Activation key"
+        },
+        "description": "Enter the activation key to add {name}.",
+        "title": "Add discovered ShevLogger"
+      },
+      "user": {
+        "data": {
+          "host": "IP address or hostname",
+          "token": "Activation key"
+        },
+        "description": "Enter the local address and activation key shown in SmartShev.",
+        "title": "Connect ShevLogger"
+      }
+    }
+  }
+}

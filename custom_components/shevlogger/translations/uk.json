@@ -1,0 +1,29 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Цей ShevLogger уже додано.",
+      "invalid_discovery": "Знайдений пристрій не передав коректний ідентифікатор."
+    },
+    "error": {
+      "cannot_connect": "Не вдалося підключитися до ShevLogger.",
+      "invalid_auth": "Неправильний ключ активації."
+    },
+    "step": {
+      "confirm": {
+        "data": {
+          "token": "Ключ активації"
+        },
+        "description": "Введіть ключ активації, щоб додати {name}.",
+        "title": "Додати знайдений ShevLogger"
+      },
+      "user": {
+        "data": {
+          "host": "IP-адреса або ім’я хоста",
+          "token": "Ключ активації"
+        },
+        "description": "Введіть локальну адресу та ключ активації, показаний у SmartShev.",
+        "title": "Підключення ShevLogger"
+      }
+    }
+  }
+}
