@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import json as json_module
+import logging
 from typing import Any
 from urllib.parse import urlsplit
 
 from aiohttp import ClientError, ClientResponse, ClientSession, ClientTimeout
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ShevLoggerError(Exception):
@@ -55,7 +59,21 @@ class ShevLoggerApi:
                 json=json,
             ) as response:
                 await self._raise_for_status(response)
-                payload = await response.json(content_type=None)
+                raw_payload = await response.read()
+                try:
+                    text_payload = raw_payload.decode("utf-8")
+                except UnicodeDecodeError as error:
+                    # Older firmware could expose one malformed byte from a
+                    # profile label and make Home Assistant retry forever.
+                    # Preserve the JSON structure and replace only that bad
+                    # display character; numeric values remain untouched.
+                    _LOGGER.warning(
+                        "ShevLogger returned invalid UTF-8 at byte %s; "
+                        "replacing the malformed display character",
+                        error.start,
+                    )
+                    text_payload = raw_payload.decode("utf-8", errors="replace")
+                payload = json_module.loads(text_payload)
         except ShevLoggerError:
             raise
         except (ClientError, TimeoutError, ValueError, TypeError) as error:
