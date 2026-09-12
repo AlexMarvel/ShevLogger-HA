@@ -1,0 +1,55 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This ShevLogger is already configured.",
+      "invalid_discovery": "The discovered device did not provide a valid identifier.",
+      "reconfigure_successful": "Address and token verified. Settings saved; the integration is reloading.",
+      "reauth_successful": "Access restored. The integration is reloading.",
+      "entry_not_found": "This integration entry was removed. Close this form.",
+      "missing_identity": "The saved gateway has no device identity. Settings were not changed.",
+      "entry_changed": "Settings changed during validation. Open the form again."
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to ShevLogger.",
+      "invalid_auth": "The LAN token does not match the gateway. Copy this ShevLogger's token from SmartShev.",
+      "missing_bearer": "The gateway did not receive an authorization header. Check the address and direct access without a proxy.",
+      "auth_rejected": "Access was refused without a specific reason. Check the ShevLogger address and LAN token.",
+      "invalid_host": "Enter the ShevLogger IPv4 address or hostname. HTTP port 80 is used; no path, password or URL parameters.",
+      "token_required": "Paste this ShevLogger's LAN token from SmartShev.",
+      "wrong_device": "A different ShevLogger answered at this address. Settings were not changed."
+    },
+    "step": {
+      "confirm": {
+        "data": {
+          "token": "LAN access token"
+        },
+        "description": "Copy the LAN access token from SmartShev to add {name}.",
+        "title": "Add discovered ShevLogger"
+      },
+      "user": {
+        "data": {
+          "host": "IP address or hostname",
+          "token": "LAN access token"
+        },
+        "description": "Enter the local address and LAN access token from SmartShev gateway settings.",
+        "title": "Connect ShevLogger"
+      },
+      "reconfigure": {
+        "title": "Edit ShevLogger address or token",
+        "description": "Enter this gateway's address. Leave the token blank to keep the saved token, or paste a replacement from SmartShev → Features → Integrations → Home Assistant. Sensors and automations are preserved.",
+        "data": {
+          "host": "IP address or hostname",
+          "token": "New LAN token (optional)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Restore ShevLogger access",
+        "description": "Check the address and paste this gateway's LAN token from SmartShev → Features → Integrations → Home Assistant. Do not delete the integration: validation updates the existing connection.",
+        "data": {
+          "host": "IP address or hostname",
+          "token": "LAN access token"
+        }
+      }
+    }
+  }
+}
